@@ -1,4 +1,6 @@
 import random
+import time
+import numpy as np
 class NodeList:
     def __init__(self, name):
         self.name = name
@@ -129,28 +131,59 @@ def create_list(g):
         for j in range(len(g.edges)):
              if g.edges[i][j] == 1:
                  l.add_directed_edge(str(i),str(j))
-    print(g.edges)
-    l.print_graph()
+    return l
     
 g =create_dag(5,0.6)
    
-create_list(g)     
+create_list(g) 
 
 
-"""
-g = Incidence_list()
-for i in range(20):
-    g.add_vertex(str(i))
-    
-rand = list(range(20))
-random.shuffle(rand)
+start_int = 10
+nmb_of_tries = 3
+list_time1 = np.array([0.0]*15)
+matrix_time1 = np.array([0.0]*15)
+list_time2 = np.array([0.0]*15)
+matrix_time2 = np.array([0.0]*15) 
 
-for i in range(19):
-    g.add_edge(str(rand[i]), str(rand[i+1]))
-g.add_edge('1', '8')
-g.add_edge('2', '13')
-g.add_edge('2', '19')
-g.add_edge('13', '15')
+for j in range(nmb_of_tries):
+    nmb = start_int
+    for i in range(15):
+        g = create_dag(nmb, 0.4)
+        l = create_list(g)
+        
+        start = time.time()
+        #wywołaj sortowanie topologiczne dla g
+        stop = time.time()
+        matrix_time1[i]+= stop-start
+        
+        start = time.time()
+        l.topological_sort()
+        stop = time.time()
+        list_time1[i] += stop-start
+        
+        b = create_dag(nmb, 0.6)
+        m = create_list(b)
+        
+        start = time.time()
+        #wywołaj sortowanie topologiczne dla b
+        stop = time.time()
+        matrix_time2[i]+= stop-start
+        
+        start = time.time()
+        m.topological_sort()
+        stop = time.time()
+        list_time2[i] += stop - start
+        
+        
+        nmb+=10
 
-print(g.topological_sort())
-"""
+list_time1/=nmb_of_tries
+matrix_time1/=nmb_of_tries
+list_time2/=nmb_of_tries
+list_time2/= nmb_of_tries
+
+print(list_time1)        
+print(matrix_time1)
+print(list_time2)
+print(matrix_time2)
+
