@@ -1,3 +1,4 @@
+import random
 class Vertex:
     def __init__(self, n):
         self.name = n
@@ -33,15 +34,26 @@ class Graph:
 				print(self.edges[i][j])
 			print(' ')    
 
-g = Graph()
-#tworzymy graf g
-# print(str(len(g.vertices)))
-#dodaje wierzcholki od A do C(wlacznie)
-for i in range(ord('A'), ord('D')):
-	g.add_vertex(Vertex(chr(i)))
-#(dodaje krawedzie skierowane)
-edges = ['AB', 'BC', 'CA']
-for edge in edges:
-	g.add_edge(edge[:1], edge[1:])
-#printuje, ale z jakiegos powodu robi enter po kazdej kolumnie
-g.print_graph()
+def create_dag(n, c):
+	#n - liczba wierzcholkow
+	#c - nasycenie
+	g = Graph()
+	edges = []
+	for i in range(n):
+		g.add_vertex(Vertex(chr(97+i)))
+	c = int((n*(n-1)/2)*c)
+	created_edges = 0
+	while created_edges < c:
+		x = random.randrange(97, 97+n)
+		y = random.randrange(x, 97+n)
+		if not chr(x) == chr(y) and not (chr(x),chr(y)) in edges:
+			g.add_edge(chr(x),chr(y))
+			edges.append((chr(x),chr(y)))
+			created_edges += 1
+	print(edges)
+	g.print_graph()
+	return g
+
+
+create_dag(5,0.6)
+#np dla n = 5 i c = 0.6
