@@ -1,3 +1,4 @@
+
 import random
 import time
 import numpy as np
@@ -103,7 +104,30 @@ class Graph:
             print(v + ' ')
             for j in range(len(self.edges)):
                 print(self.edges[i][j])
-            print(' ')    
+            print(' ')  
+    
+    def topological_sort(self):
+        g = list(self.edges)
+        vert = len(g)
+        stack = []
+        for i in range(vert):
+            for j in range(vert):
+                if g[i][j] == 1:
+                    self._topological_sort(i,j,stack,vert,g)
+        for i in range(vert, -1, -1):
+            if i not in stack:
+                stack.insert(0,i)
+        return stack
+        
+                    
+    def _topological_sort(self, i, j, stack, vert,g):
+        g[i][j] = 0
+        for k in range(vert):
+            if g[j][k] == 1:
+                self._topological_sort(j,k,stack,vert,g)
+        if j not in stack:
+            stack.insert(0,j)
+                    
 
 def create_dag(n, c):
     #n - liczba wierzcholkow
@@ -133,12 +157,8 @@ def create_list(g):
                  l.add_directed_edge(str(i),str(j))
     return l
     
-g =create_dag(5,0.6)
-   
-create_list(g) 
 
-
-start_int = 10
+start_int = 100
 nmb_of_tries = 3
 list_time1 = np.array([0.0]*15)
 matrix_time1 = np.array([0.0]*15)
@@ -150,9 +170,9 @@ for j in range(nmb_of_tries):
     for i in range(15):
         g = create_dag(nmb, 0.4)
         l = create_list(g)
-        
+        """
         start = time.time()
-        #wywołaj sortowanie topologiczne dla g
+        g.topological_sort()
         stop = time.time()
         matrix_time1[i]+= stop-start
         
@@ -160,12 +180,13 @@ for j in range(nmb_of_tries):
         l.topological_sort()
         stop = time.time()
         list_time1[i] += stop-start
+        """
         
         b = create_dag(nmb, 0.6)
         m = create_list(b)
         
         start = time.time()
-        #wywołaj sortowanie topologiczne dla b
+        b.topological_sort()
         stop = time.time()
         matrix_time2[i]+= stop-start
         
@@ -175,15 +196,14 @@ for j in range(nmb_of_tries):
         list_time2[i] += stop - start
         
         
-        nmb+=10
+        nmb+=100
 
 list_time1/=nmb_of_tries
 matrix_time1/=nmb_of_tries
 list_time2/=nmb_of_tries
 list_time2/= nmb_of_tries
 
-print(list_time1)        
-print(matrix_time1)
-print(list_time2)
-print(matrix_time2)
-
+#print(list(list_time1))      
+#print(list(matrix_time1))
+print(list(list_time2))
+print(list(matrix_time2))
