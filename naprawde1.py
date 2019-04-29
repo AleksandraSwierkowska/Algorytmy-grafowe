@@ -27,16 +27,6 @@ class SLinkedList:
             print(printval.name + " " + str(printval.val))
             printval = printval.next
             
-    def find_min(self, tab):
-        current = self.head.next
-        minimum = 100000000000
-        v = current.name
-        while current != None:
-            if current.val < minimum and current.name not in tab:
-                minimum = current.val
-                v = current.name
-            current = current.next
-        return v, minimum
     
     def finding(self, item):
         first = self.head
@@ -72,20 +62,27 @@ class Incidence_list:
         
     def prim(self):
         mst = []
+        edges = []
         v_list = sorted(list(self.vertices.keys()))
         element = v_list[0]
-        visited = [element]
+        visited = [0] * len(v_list)
+        visited[0] = 1
         while len(mst) < len(v_list) - 1:
+            current = self.vertices[element].head.next
+            while current!=None:
+                edges.append((element, current.name, current.val))
+                current = current.next
             minimum = 100000
-            for i in visited:
-                if self.vertices[i].find_min(visited)[1]<minimum:
-                    start = i
-                    minimum = self.vertices[i].find_min(visited)[1]
-                    stop = self.vertices[i].find_min(visited)[0]
-            visited.append(stop)
+            for i in edges:
+                if i[2] < minimum and visited[int(i[1])] == 0:
+                    start = i[0]
+                    minimum = i[2]
+                    stop = i[1]
             mst.append((start, stop, minimum))
+            element = stop
+            visited[int(stop)] = 1
         return mst
-            
+               
         
 class Vertex:
     def __init__(self, n):
@@ -124,27 +121,29 @@ class Graph:
             
     def prim(self):
         mst = []
-        visited = [0]
-        while len(mst) < len(self.edges) - 1:
+        edge_number = len(self.edges)
+        visited = [0]*edge_number
+        start = 0
+        element = self.edges[0]
+        visited[0] = 1
+        edges = []
+        while len(mst) < edge_number - 1:
             minimum = 10000
-            for i in visited:
-                if find_min(self.edges[i], visited)[0] < minimum:
-                    minimum = find_min(self.edges[i], visited)[0]
-                    start = str(i)
-                    stop = find_min(self.edges[i], visited)[1]
-            visited.append(stop)
-            mst.append((start, str(stop), minimum))
+            for i in range(edge_number):
+                if element[i] > 0:
+                    edges.append((start, i, element[i]))
+            for i in edges:
+                if i[2] < minimum and visited[i[1]] == 0:
+                    minimum = i[2]
+                    st = i[0]
+                    end = i[1]
+            mst.append((st, end, minimum))
+            element = self.edges[end]
+            start = end
+            visited[end] = 1
+            
         return mst
     
-        
-def find_min(lst, tab):
-    minimum = 100000
-    idx = -1
-    for j in range(len(lst)):
-        if 0<lst[j]<minimum and j not in tab:
-            minimum = lst[j]
-            idx = j
-    return minimum, idx
 
 def create_dag(n, c):
     #n - liczba wierzcholkow
@@ -174,8 +173,7 @@ def create_list(g):
              if g.edges[i][j] != 0 and l.vertices[list(l.vertices.keys())[i]].finding(str(j)) == False:
                  l.add_edge(str(i),str(j), g.edges[i][j])
     return l
- 
-            
+        
 start_int = 10
 nmb_of_tries = 3
 list_time1 = np.array([0.0]*15)
