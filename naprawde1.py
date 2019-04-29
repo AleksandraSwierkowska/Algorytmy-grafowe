@@ -156,8 +156,9 @@ def create_dag(n, c):
         if len(choose) == 0: #gdy lista sie konczy, jest odnawiana
             for i in range(n):
                 choose.append(i)
-        x = (random.choice(choose)) #wybor losowego wierzcholka z listy, kazdy bedzie wybrany min 1 raz
-        choose.remove(x) #usuniecie uzytego z listy, aby dac innym szanse
+        x = (random.choice(choose)) #wybor losowego wierzcholka z listy i usuniecie go z wyboru
+        if sum(g.edges[x]) > 0: #usuwany jest tylko, gdy dany wierzcholek ma jakas krawedz
+            choose.remove(x)
         y = str(random.randrange(x, n))
         x = str(x)
         nmb = random.randrange(1000)
@@ -165,6 +166,7 @@ def create_dag(n, c):
             g.add_edge(x,y, nmb)
             edges.append((x,y))
             created_edges += 1
+            
     return g
          
 def create_list(g):
