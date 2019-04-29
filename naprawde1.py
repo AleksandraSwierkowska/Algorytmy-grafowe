@@ -36,7 +36,7 @@ class SLinkedList:
                 minimum = current.val
                 v = current.name
             current = current.next
-        return v
+        return v, minimum
     
     def finding(self, item):
         first = self.head
@@ -68,21 +68,25 @@ class Incidence_list:
         for key in sorted(list(self.vertices.keys())):
             print("klucz: ", key)
             self.vertices[key].print_list()
- 
+     
+        
     def prim(self):
-        self.mst = {}
-        ans = []
+        mst = []
         v_list = sorted(list(self.vertices.keys()))
-        el = v_list[0]
-        tab = [el]
-        while len(self.mst) < len(self.vertices) - 1:
-            link = self.vertices[el].find_min(tab)
-            self.mst[el] = link
-            tab.append(link)
-            el = link  
-        for i in self.mst.keys():
-            ans.append((i, self.mst[i]))
-        return ans
+        element = v_list[0]
+        visited = [element]
+        while len(mst) < len(v_list) - 1:
+            minimum = 100000
+            for i in visited:
+                if self.vertices[i].find_min(visited)[1]<minimum:
+                    start = i
+                    minimum = self.vertices[i].find_min(visited)[1]
+                    stop = self.vertices[i].find_min(visited)[0]
+            visited.append(stop)
+            mst.append((start, stop, minimum))
+        return mst
+            
+        
 class Vertex:
     def __init__(self, n):
         self.name = n
@@ -119,24 +123,25 @@ class Graph:
             print(' ')  
             
     def prim(self):
-        ans = []
-        start = 0
-        el = self.edges[start]
-        visited = []
-        visited.append(start)
-        while len(ans) < len(self.edges) - 1:
-            link = find_min(el, visited)
-            idx = link[1]
-            ans.append((start, idx))
-            visited.append(link[0])
-            el = self.edges[idx]  
-            start = idx
-        return ans
+        mst = []
+        visited = [0]
+        while len(mst) < len(self.edges) - 1:
+            minimum = 10000
+            for i in visited:
+                if find_min(self.edges[i], visited)[0] < minimum:
+                    minimum = find_min(self.edges[i], visited)[0]
+                    start = str(i)
+                    stop = find_min(self.edges[i], visited)[1]
+            visited.append(stop)
+            mst.append((start, str(stop), minimum))
+        return mst
+    
         
 def find_min(lst, tab):
     minimum = 100000
+    idx = -1
     for j in range(len(lst)):
-        if 0<lst[j]<minimum and lst[j] not in tab:
+        if 0<lst[j]<minimum and j not in tab:
             minimum = lst[j]
             idx = j
     return minimum, idx
@@ -146,27 +151,18 @@ def create_dag(n, c):
     #c - nasycenie
     g = Graph()
     edges = []
-    choose = [] #lista wierzcholkow
     for i in range(n):
         g.add_vertex(Vertex(str(i)))
-        choose.append(i)
     c = int((n*(n-1)/2)*c)
     created_edges = 0
     while created_edges < c:
-        if len(choose) == 0: #gdy lista sie konczy, jest odnawiana
-            for i in range(n):
-                choose.append(i)
-        x = (random.choice(choose)) #wybor losowego wierzcholka z listy i usuniecie go z wyboru
-        if sum(g.edges[x]) > 0: #usuwany jest tylko, gdy dany wierzcholek ma jakas krawedz
-            choose.remove(x)
-        y = str(random.randrange(x, n))
-        x = str(x)
+        x = str(random.randrange(n))
+        y = str(random.randrange(int(x), n))
         nmb = random.randrange(1000)
         if not x == y and not (x,y) in edges:
             g.add_edge(x,y, nmb)
             edges.append((x,y))
             created_edges += 1
-            
     return g
          
 def create_list(g):
@@ -179,7 +175,7 @@ def create_list(g):
                  l.add_edge(str(i),str(j), g.edges[i][j])
     return l
  
-           
+            
 start_int = 10
 nmb_of_tries = 3
 list_time1 = np.array([0.0]*15)
@@ -227,4 +223,3 @@ print(list(list_time1))
 print(list(matrix_time1))
 print(list(list_time2))
 print(list(matrix_time2))
-
