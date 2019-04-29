@@ -201,7 +201,7 @@ for j in range(nmb_of_tries):
 #list_time1/=nmb_of_tries
 #matrix_time1/=nmb_of_tries
 list_time2/=nmb_of_tries
-list_time2/= nmb_of_tries
+matrix_time2/= nmb_of_tries
 
 #print(list(list_time1))      
 #print(list(matrix_time1))
