@@ -158,19 +158,20 @@ def create_list(g):
     return l
     
 
-start_int = 100
+start_int = 10
 nmb_of_tries = 3
-list_time1 = np.array([0.0]*15)
-matrix_time1 = np.array([0.0]*15)
+#list_time1 = np.array([0.0]*15)
+#matrix_time1 = np.array([0.0]*15)
 list_time2 = np.array([0.0]*15)
 matrix_time2 = np.array([0.0]*15) 
 
 for j in range(nmb_of_tries):
     nmb = start_int
     for i in range(15):
+        """
         g = create_dag(nmb, 0.4)
         l = create_list(g)
-        """
+        
         start = time.time()
         g.topological_sort()
         stop = time.time()
@@ -195,11 +196,10 @@ for j in range(nmb_of_tries):
         stop = time.time()
         list_time2[i] += stop - start
         
-        
-        nmb+=100
+        nmb+=10
 
-list_time1/=nmb_of_tries
-matrix_time1/=nmb_of_tries
+#list_time1/=nmb_of_tries
+#matrix_time1/=nmb_of_tries
 list_time2/=nmb_of_tries
 list_time2/= nmb_of_tries
 
