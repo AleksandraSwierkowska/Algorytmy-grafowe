@@ -146,13 +146,20 @@ def create_dag(n, c):
     #c - nasycenie
     g = Graph()
     edges = []
+    choose = [] #lista wierzcholkow
     for i in range(n):
         g.add_vertex(Vertex(str(i)))
+        choose.append(i)
     c = int((n*(n-1)/2)*c)
     created_edges = 0
     while created_edges < c:
-        x = str(random.randrange(n))
-        y = str(random.randrange(int(x), n))
+        if len(choose) == 0: #gdy lista sie konczy, jest odnawiana
+            for i in range(n):
+                choose.append(i)
+        x = (random.choice(choose)) #wybor losowego wierzcholka z listy, kazdy bedzie wybrany min 1 raz
+        choose.remove(x) #usuniecie uzytego z listy, aby dac innym szanse
+        y = str(random.randrange(x, n))
+        x = str(x)
         nmb = random.randrange(1000)
         if not x == y and not (x,y) in edges:
             g.add_edge(x,y, nmb)
