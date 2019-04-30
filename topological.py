@@ -158,7 +158,7 @@ def create_list(g):
     return l
     
 
-start_int = 10
+start_int = 50
 nmb_of_tries = 3
 #list_time1 = np.array([0.0]*15)
 #matrix_time1 = np.array([0.0]*15)
@@ -196,7 +196,9 @@ for j in range(nmb_of_tries):
         stop = time.time()
         list_time2[i] += stop - start
         
-        nmb+=10
+        nmb+=20
+        
+        print(j,i)
 
 #list_time1/=nmb_of_tries
 #matrix_time1/=nmb_of_tries
