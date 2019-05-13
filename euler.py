@@ -31,7 +31,7 @@ class Graph:
 
     def print_graph(self):
         for v, i in sorted(self.edge_indices.items()):
-            print(v + ' ')
+            #print(v + ' ')
             edges = []
             for j in range(len(self.edges)):
                 edges.append(self.edges[i][j])
@@ -44,7 +44,9 @@ class Graph:
         for i in range(length):
             if self.edges[v][i] == 1:
                 self.edges[v][i] = -1
+                self.edges[i][v] = -1
                 self._euler(i, vert)
+        vert.append(v)
         return vert
 
     def _euler(self, v, vert):
@@ -52,6 +54,7 @@ class Graph:
         for i in range(length):
             if self.edges[v][i] == 1:
                 self.edges[v][i] = -1
+                self.edges[i][v] = -1
                 self._euler(i, vert)
         vert.append(v)
 
@@ -67,22 +70,22 @@ def create_euler(n, c):
     random.shuffle(vertex)
     for i in range(n-1):
         g.add_edge(str(vertex[i]), str(vertex[i+1]))
-        edges.append((str(vertex[i]), str(vertex[i+1])))
-
+    g.add_edge(str(vertex[-1]), str(vertex[0]))
     c = (n * (n - 1) / 2) * c
     created_edges = n-1
     while created_edges < c:
-        x = str(random.randrange(n))
-        y = str(random.randrange(int(x), n))
-        z = str(random.randrange(int(x), n))
-        if not x == y == z and not (x, y) in edges and not (x,z) in edges:
-            g.add_edge(x, y)
-            g.add_edge(x, z)
-            edges.append((x, y))
-            edges.append((x,z))
-            created_edges += 2
+        x = random.randrange(n)
+        y = random.randrange(n)
+        z = random.randrange(n)
+        if x!=y and y!=z and z!=x and g.edges[x][y]!=1 and g.edges[y][z]!=1 and g.edges[x][z]!=1:
+            print(x,y,z)
+            g.add_edge(str(x), str(y))
+            g.add_edge(str(x), str(z))
+            g.add_edge(str(y),str(z))
+            created_edges += 3
+
     return g
 
-g = create_euler(10, 0.5)
-#g.print_graph()
+g = create_euler(6, 0.5)
+g.print_graph()
 print(g.euler('0'))
