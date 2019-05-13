@@ -63,8 +63,14 @@ def create_euler(n, c):
     edges = []
     for i in range(n):
         g.add_vertex(Vertex(str(i)))
-    c = int((n * (n - 1) / 2) * c)
-    created_edges = 0
+    vertex = list(range(n))
+    random.shuffle(vertex)
+    for i in range(n-1):
+        g.add_edge(str(vertex[i]), str(vertex[i+1]))
+        edges.append((str(vertex[i]), str(vertex[i+1])))
+
+    c = (n * (n - 1) / 2) * c
+    created_edges = n-1
     while created_edges < c:
         x = str(random.randrange(n))
         y = str(random.randrange(int(x), n))
