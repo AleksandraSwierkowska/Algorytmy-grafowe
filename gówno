@@ -1,0 +1,18 @@
+    def hamilton(self, start):
+        out = [start]
+        v = start
+        return self._hamilton(out, start, v)
+
+    def _hamilton(self, out, start, v):
+        for i in range(len(self.edges)):
+            if len(out) > len(self.edges) + 1:
+                break
+            elif self.edges[v][i] != 0 and i not in out:
+                out.append(i)
+                out= self._hamilton(out, start, i)
+        if len(out) >= len(self.edges):
+            if len(out) == len(self.vertices) and self.edges[v][start] > 0:
+                out.append(start)
+        else:
+            out.pop()
+        return out
