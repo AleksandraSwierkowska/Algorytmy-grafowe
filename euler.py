@@ -1,4 +1,6 @@
 import random
+import numpy as np
+import time
 
 class Vertex:
     def __init__(self, n):
@@ -58,6 +60,28 @@ class Graph:
                 self._euler(i, vert)
         vert.append(v)
 
+    def _hamilton(self, out, start, v):
+        for i in range(len(self.edges)):
+            if len(out) == len(self.edges) + 1:
+                break
+            elif self.edges[v][i] != 0 and not (i in out):
+                out.append(i)
+                out = self._hamilton(out, start, i)
+        print(v)
+        print(out)
+        if len(out) >= len(self.edges):
+            print("wie:" +str(v))
+            if len(out) == len(self.edges) and self.edges[v][start] == 1:
+                print(str(v)+' '+str(start))
+                out.append(start)
+        else:
+            out.pop()
+        return out
+
+    def hamilton(self, v):
+        out = [v]
+        start = v
+        return self._hamilton(out, start, v)
 
 def create_euler(n, c):
     # n - liczba wierzcholkow
@@ -78,7 +102,6 @@ def create_euler(n, c):
         y = random.randrange(n)
         z = random.randrange(n)
         if x!=y and y!=z and z!=x and g.edges[x][y]!=1 and g.edges[y][z]!=1 and g.edges[x][z]!=1:
-            print(x,y,z)
             g.add_edge(str(x), str(y))
             g.add_edge(str(x), str(z))
             g.add_edge(str(y),str(z))
@@ -86,6 +109,46 @@ def create_euler(n, c):
 
     return g
 
-g = create_euler(6, 0.5)
-g.print_graph()
-print(g.euler('0'))
+tries_number = 3
+start_int = 30
+euler30 = np.array([0.0] * 15)
+euler70 = np.array([0.0] * 15)
+hamilton30 = np.array([0.0] * 15)
+hamilton70 = np.array([0.0] * 15)
+
+for j in range(tries_number):
+    nmb = start_int
+    for i in range(15):
+        g30 = create_euler(nmb, 0.3)
+        g70 = create_euler(nmb, 0.7)
+        
+        start = time.time()
+        g30.euler('0')
+        stop = time.time()
+        euler30[i] += stop - start
+        
+        start = time.time()
+        g30.hamilton(0)
+        stop = time.time()
+        hamilton30[i] += stop - start
+        
+        start = time.time()
+        g70.euler('0')
+        stop = time.time()
+        euler70[i] += stop - start
+        
+        start = time.time()
+        g70.hamilton(0)
+        stop = time.time()
+        hamilton70[i] += stop - start
+        nmb += 20
+        
+euler70/=tries_number
+euler30/=tries_number
+hamilton70/=tries_number
+hamilton30/=tries_number
+
+print(list(euler30))
+print(list(hamilton30))
+print(list(euler70))
+print(list(hamilton70))
